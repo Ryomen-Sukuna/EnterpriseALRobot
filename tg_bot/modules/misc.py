@@ -65,10 +65,7 @@ def get_id(update: Update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
     msg = update.effective_message
-    user_id = extract_user(msg, args)
-
-    if user_id:
-
+    if user_id := extract_user(msg, args):
         if msg.reply_to_message and msg.reply_to_message.forward_from:
 
             user1 = message.reply_to_message.from_user
@@ -89,17 +86,15 @@ def get_id(update: Update, context: CallbackContext):
                 parse_mode=ParseMode.HTML,
             )
 
+    elif chat.type == "private":
+        msg.reply_text(
+            f"Your id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
+        )
+
     else:
-
-        if chat.type == "private":
-            msg.reply_text(
-                f"Your id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
-            )
-
-        else:
-            msg.reply_text(
-                f"This group's id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
-            )
+        msg.reply_text(
+            f"This group's id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
+        )
 
 @kigcmd(command='gifid')
 def gifid(update: Update, _):
@@ -118,9 +113,7 @@ def info(update: Update, context: CallbackContext):  # sourcery no-metrics
     args = context.args
     message = update.effective_message
     chat = update.effective_chat
-    user_id = extract_user(update.effective_message, args)
-
-    if user_id:
+    if user_id := extract_user(update.effective_message, args):
         user = bot.get_chat(user_id)
 
     elif not message.reply_to_message and not args:
@@ -156,8 +149,7 @@ def info(update: Update, context: CallbackContext):  # sourcery no-metrics
     text += f"\nPermanent user link: {mention_html(user.id, 'link')}"
 
     try:
-        spamwtc = sw.get_ban(int(user.id))
-        if spamwtc:
+        if spamwtc := sw.get_ban(int(user.id)):
             text += "<b>\n\nSpamWatch:\n</b>"
             text += "<b>This person is banned in Spamwatch!</b>"
             text += f"\nReason: <pre>{spamwtc.reason}</pre>"
@@ -330,7 +322,7 @@ def stats(update, context):
     ]
     repo = git.Repo(search_parent_directories=True)
     sha = repo.head.object.hexsha
-    status += f"*• Commit*: `{sha[0:9]}`\n"
+    status += f'*• Commit*: `{sha[:9]}`\n'
     try:
         update.effective_message.reply_text(status +
             "\n*Bot statistics*:\n"

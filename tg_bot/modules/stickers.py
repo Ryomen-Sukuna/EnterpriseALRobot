@@ -17,18 +17,20 @@ def stickerid(update: Update, context: CallbackContext):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text(
-            "Hello "
-            + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
-            + ", The sticker id you are replying is :\n <code>"
-            + escape(msg.reply_to_message.sticker.file_id)
-            + "</code>",
+            (
+                (
+                    f'Hello {mention_html(msg.from_user.id, msg.from_user.first_name)}'
+                    + ", The sticker id you are replying is :\n <code>"
+                )
+                + escape(msg.reply_to_message.sticker.file_id)
+                + "</code>"
+            ),
             parse_mode=ParseMode.HTML,
         )
+
     else:
         update.effective_message.reply_text(
-            "Hello "
-            + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
-            + ", Please reply to sticker message to get id sticker",
+            f'Hello {mention_html(msg.from_user.id, msg.from_user.first_name)}, Please reply to sticker message to get id sticker',
             parse_mode=ParseMode.HTML,
         )
 
@@ -47,12 +49,7 @@ def getsticker(update: Update, context: CallbackContext):
         sticker_data = new_file.download(out=BytesIO())
         # go back to the start of the buffer
         sticker_data.seek(0)
-        # Reply with the document. Telegram INSISTS on making anything
-        # that ends in .tgs become an animated sticker so we'll have to
-        # rename it to something the user should know how to handle.
-        filename = "sticker.png"
-        if is_animated:
-            filename = "animated_sticker.tgs.rename_me"
+        filename = "animated_sticker.tgs.rename_me" if is_animated else "sticker.png"
         # Send the document
         bot.send_document(chat_id,
             document=sticker_data,

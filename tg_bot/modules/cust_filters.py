@@ -290,10 +290,10 @@ def reply_filter(update, context):  # sourcery no-metrics
                     "mention",
                 ]
                 if filt.reply_text:
-                    valid_format = escape_invalid_curly_brackets(
-                        markdown_to_html(filt.reply_text), VALID_WELCOME_FORMATTERS
-                    )
-                    if valid_format:
+                    if valid_format := escape_invalid_curly_brackets(
+                        markdown_to_html(filt.reply_text),
+                        VALID_WELCOME_FORMATTERS,
+                    ):
                         filtext = valid_format.format(
                             first=escape(message.from_user.first_name),
                             last=escape(
@@ -348,7 +348,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                     reply_markup=keyboard,
                                 )
                             except BadRequest as excp:
-                                log.exception("Error in filters: " + excp.message)
+                                log.exception(f'Error in filters: {excp.message}')
                                 send_message(
                                     update.effective_message,
                                     get_exception(excp, filt, chat),
@@ -360,9 +360,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                     get_exception(excp, filt, chat),
                                 )
                             except BadRequest as excp:
-                                log.exception(
-                                    "Failed to send message: " + excp.message
-                                )
+                                log.exception(f'Failed to send message: {excp.message}')
                 elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[filt.file_type](
                         chat.id,
@@ -414,7 +412,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                 "again...",
                             )
                         except BadRequest as excp:
-                            log.exception("Error in filters: " + excp.message)
+                            log.exception(f'Error in filters: {excp.message}')
                     elif excp.message == "Reply message not found":
                         try:
                             context.bot.send_message(
@@ -425,7 +423,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                 reply_markup=keyboard,
                             )
                         except BadRequest as excp:
-                            log.exception("Error in filters: " + excp.message)
+                            log.exception(f'Error in filters: {excp.message}')
                     else:
                         try:
                             send_message(
@@ -433,7 +431,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                 "This message couldn't be sent as it's incorrectly formatted.",
                             )
                         except BadRequest as excp:
-                            log.exception("Error in filters: " + excp.message)
+                            log.exception(f'Error in filters: {excp.message}')
                         log.warning(
                             "Message %s could not be parsed", str(filt.reply)
                         )
@@ -448,7 +446,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                 try:
                     send_message(update.effective_message, filt.reply)
                 except BadRequest as excp:
-                    log.exception("Error in filters: " + excp.message)
+                    log.exception(f'Error in filters: {excp.message}')
             break
 
 

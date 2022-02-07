@@ -145,14 +145,13 @@ def sibyl_ban(update: Update, context: CallbackContext):
 def toggle_sibyl(update: Update, _: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
-    do = does_chat_sibylban(chat.id)
-    if not do:
-        enable_sibyl(chat.id)
-        message.reply_text("Dominator enabled for {}".format(chat.title))
-    else:
+    if do := does_chat_sibylban(chat.id):
         disable_sibyl(chat.id)
         message.reply_text("Dominator disabled for {}".format(chat.title))
 
+    else:
+        enable_sibyl(chat.id)
+        message.reply_text("Dominator enabled for {}".format(chat.title))
     return
 
 

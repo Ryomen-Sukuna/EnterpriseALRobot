@@ -14,7 +14,7 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 def shorten(description, info="anilist.co"):
     msg = ""
     if len(description) > 700:
-        description = description[0:500] + "...."
+        description = f'{description[:500]}....'
         msg += f"\n*Description*: _{description}_[Read More]({info})"
     else:
         msg += f"\n*Description*:_{description}_"
@@ -212,7 +212,7 @@ def anime(update: Update, context: CallbackContext):  # sourcery no-metrics
             trailer_id = trailer.get("id", None)
             site = trailer.get("site", None)
             if site == "youtube":
-                trailer = "https://youtu.be/" + trailer_id
+                trailer = f'https://youtu.be/{trailer_id}'
         description = (
             json.get("description", "N/A")
             .replace("<i>", "")
@@ -273,8 +273,7 @@ def character(update: Update, context: CallbackContext):
         description = f"{json['description']}"
         site_url = json.get("siteUrl")
         msg += shorten(description, site_url)
-        image = json.get("image", None)
-        if image:
+        if image := json.get("image", None):
             image = image.get("large")
             update.effective_message.reply_photo(
                 photo=image,
